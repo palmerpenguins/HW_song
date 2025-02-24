@@ -1,0 +1,28 @@
+---
+title: "date_map_hw"
+author: "Jin Sook Song"
+output: html_document
+---
+
+# Homework: lubridate and purrr
+
+**Exercise 1: Advanced Date Manipulation with lubridate**
+
+## Question 1.
+
+```{r}
+library(lubridate)
+
+# Create a sequence of dates from January 1, 2015 to December 31, 2025, spaced by every two months
+dates <- seq(ymd("2015-01-01"), ymd("2025-12-31"), by = "2 months")
+
+# Extract the year, quarter, and ISO week number for each date
+date_info <- data.frame(
+  date     = dates,
+  year     = year(dates),
+  quarter  = quarter(dates),
+  iso_week = isoweek(dates))
+
+# Print the data frame
+print(date_info)
+```
