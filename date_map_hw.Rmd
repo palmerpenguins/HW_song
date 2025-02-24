@@ -54,3 +54,35 @@ results <- data.frame(
 # Display the result
 print(results)
 ```
+
+**Exercise 3: Higher-Order Functions with purrr**
+
+## Question 3.
+
+```{r}
+library(purrr)
+
+# Define the list of numeric vectors
+num_lists <- list(
+  c(4, 16, 25, 36, 49),
+  c(2.3, 5.7, 8.1, 11.4),
+  c(10, 20, 30, 40, 50))
+
+# Compute the mean for each vector using map_dbl()
+means <- map_dbl(num_lists, mean)
+
+# Compute the median for each vector using map_dbl()
+medians <- map_dbl(num_lists, median)
+
+# Compute the standard deviation for each vector using map_dbl()
+sds <- map_dbl(num_lists, sd)
+
+# Combine the results into a data frame
+results <- data.frame(
+  Mean = means,
+  Median = medians,
+  SD = sds)
+
+# Print the results
+print(results)
+```
