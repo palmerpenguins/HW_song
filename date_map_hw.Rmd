@@ -86,3 +86,34 @@ results <- data.frame(
 # Print the results
 print(results)
 ```
+
+**Exercise 4: Combining lubridate and purrr**
+
+## Question 4.
+
+```{r}
+# Load required libraries
+library(lubridate)
+library(purrr)
+
+# Define the list of mixed-format date strings
+date_strings <- list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
+
+# Create a safe date-parsing function using possibly()
+safe_parse_date <- possibly(function(x) {
+  parse_date_time(x, orders = c("ymd", "dmy"))
+}, otherwise = NA)
+
+# Apply the safe_parse_date function to each element of date_strings
+dates <- map(date_strings, safe_parse_date)
+
+# Extract the full month name for each successfully parsed date;
+# if the date is NA, return NA.
+month_names <- map_chr(dates, ~ if (!is.na(.x)) {
+  as.character(month(.x, label = TRUE, abbr = FALSE))
+} else {
+  NA_character_ })
+
+# Print the results
+print(month_names)
+```
