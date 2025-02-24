@@ -26,3 +26,31 @@ date_info <- data.frame(
 # Print the data frame
 print(date_info)
 ```
+
+**Exercise 2: Complex Date Arithmetic**
+
+## Question 2.
+
+```{r}
+# Define the sample dates and convert them to Date objects using ymd()
+sample_dates <- c("2018-03-15", "2020-07-20", "2023-01-10", "2025-09-05")
+dates <- ymd(sample_dates)
+
+# Calculate the differences for each consecutive pair using an interval
+results <- data.frame(
+  Start_Date = dates[-length(dates)],
+  End_Date = dates[-1],
+  Months_Difference = sapply(1:(length(dates)-1), function(i) {
+    # Create an interval between two dates
+    intv <- interval(dates[i], dates[i+1])
+    # Compute the difference in months (fractional values possible)
+    time_length(intv, "months")
+  }),
+  Weeks_Difference = sapply(1:(length(dates)-1), function(i) {
+    intv <- interval(dates[i], dates[i+1])
+    # Compute the difference in weeks
+    time_length(intv, "weeks") }))
+
+# Display the result
+print(results)
+```
