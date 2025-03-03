@@ -1,0 +1,95 @@
+---
+title: "dottable hw"
+author: "Jin Sook Song"
+format: html
+editor: visual
+---
+
+# Classwork Biggish Data
+
+## Question 1.
+
+```{r}
+library(data.table)
+dt <- fread("nycdata.csv")
+dt_q1 <- dt[, .(year, month, day, hour)]
+head(dt_q1)
+```
+
+## Question 2.
+
+```{r}
+library(data.table)
+dt <- fread("nycdata.csv")
+dt_q2 <- dt[carrier == "DL" & origin == "JFK" & dest == "SEA"]
+head(dt_q2)
+```
+
+## Question 3.
+
+```{r}
+library(data.table)
+dt <- fread("nycdata.csv")
+dt_q3 <- dt[carrier == "UA" & month == 3 & air_time < 330]
+head(dt_q3)
+```
+
+## Question 4.
+
+```{r}
+library(tidyverse)
+df <- read_csv("nycdata.csv")
+df_q4 <- df %>%
+  filter(carrier == "UA", month == 3, air_time < 330)
+head(df_q4)
+```
+
+## Question 5.
+
+```{r}
+library(data.table)
+dt <- fread("nycdata.csv")
+dt[, speed := (distance / air_time) * 60]
+head(dt)
+```
+
+## Question 6.
+
+```{r}
+library(tidyverse)
+df <- read_csv("nycdata.csv")
+df <- df %>%
+  mutate(speed = (distance / air_time) * 60)
+head(df)
+```
+
+## Question 7a.
+
+```{r}
+library(data.table)
+dt <- fread("nycdata.csv")
+unique(dt$carrier) # before change
+```
+
+```{r}
+dt[carrier == "UA", carrier := "UnitedAir"]
+unique(dt$carrier) # after change
+```
+
+## Question 7b.
+
+```{r}
+library(tidyverse)
+library(dplyr)
+df <- read_csv("nycdata.csv")
+```
+
+```{r}
+df %>% pull(carrier) %>% unique() # before change
+```
+
+```{r}
+df <- df %>%
+  mutate(carrier = ifelse(carrier == "UA", "UnitedAir", carrier))
+df %>% pull(carrier) %>% unique() # after change
+```
