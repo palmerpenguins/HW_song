@@ -1,0 +1,110 @@
+---
+title: "DBeaver Assignment"
+author: "Jin Sook Song"
+format: html
+editor: visual
+---
+
+# DBeaver
+
+```{r}
+library(DBI)
+library(duckdb)
+```
+
+```{r}
+# Establish a DB connection
+con <- dbConnect(duckdb(), "flights.duckdb", read_only = TRUE)
+
+# print(con)
+# dbIsValid(con)
+```
+
+```{r}
+dbListTables(con)
+```
+
+## Question 1.
+
+```{r}
+# Query to get the top few rows from the weather table
+query <- "SELECT * FROM weather LIMIT 5;"
+
+# Execute query and fetch results
+weather_data <- dbGetQuery(con, query)
+
+# Display results
+# print(weather_data)
+```
+
+```{r}
+# Query to compute mean temperature for each airport using the weather table
+query <- "
+SELECT origin, AVG(temp) AS mean_temperature
+FROM weather
+GROUP BY origin;
+"
+# Execute query and fetch results
+mean_temperature <- dbGetQuery(con, query)
+
+# Display results
+print(mean_temperature)
+```
+
+## Question 2.
+
+```{r}
+# Query to get the top few rows from the weather table
+query <- "SELECT * FROM flights LIMIT 5;"
+
+# Execute query and fetch results
+weather_data <- dbGetQuery(con, query)
+
+# Display results
+# print(weather_data)
+```
+
+```{r}
+# Query to calculate the average number of flights per day from each airport in January
+query2 <- "
+SELECT origin, 
+       COUNT(*) / COUNT(DISTINCT day) AS avg_flights_per_day
+FROM flights
+WHERE month = 1
+GROUP BY origin;
+"
+
+# Execute query and fetch results
+avg_flights_per_day <- dbGetQuery(con, query2)
+
+# Display results
+print(avg_flights_per_day)
+```
+
+## Question 3.
+
+```{r}
+# 3. Top destinations for each airport
+query3 <- "
+WITH RankedDestinations AS (
+    SELECT origin, dest, COUNT(*) AS flight_count,
+           RANK() OVER (PARTITION BY origin ORDER BY COUNT(*) DESC) AS rnk
+    FROM flights
+    GROUP BY origin, dest
+)
+SELECT origin, dest, flight_count
+FROM RankedDestinations
+WHERE rnk = 1;
+"
+
+# Execute queries and fetch results
+top_destinations <- dbGetQuery(con, query3)
+
+# Display results
+print(top_destinations)
+```
+
+```{r}
+# Disconnect from database
+dbDisconnect(con, shutdown = TRUE)
+```
