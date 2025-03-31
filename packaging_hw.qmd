@@ -1,0 +1,72 @@
+---
+title: "packaging assignment"
+author: "Jin Sook Song"
+format: html
+editor: visual
+---
+
+# packaging
+
+## part a.
+
+```{r}
+# Create folder
+dir.create("forloop")
+
+# Set working directory to the new folder
+setwd("forloop")
+```
+
+## part b.
+
+```{r}
+# Create R sub-directory
+dir.create("R")
+
+# Create an R script inside the R sub-directory
+file.create("R/practice.R")
+```
+
+## part c.
+
+```{r}
+col_means <- function(df) {
+  means <- numeric(ncol(df))
+  for (i in seq_along(df)) {
+    column <- df[[i]]
+    means[i] <- sum(column, na.rm = TRUE) / sum(!is.na(column))}
+  return(means)}
+```
+
+```{r}
+# Let's test the function col_means()
+
+# Create a sample data frame
+test_df <- data.frame(
+  a = c(1, 2, 3, NA),
+  b = c(4, 5, NA, 7),
+  c = c(NA, NA, 9, 10))
+
+# Call col_means()
+col_means(test_df)
+```
+
+## part d.
+
+```{r}
+count_na <- function(vec) {
+  na_count <- 0
+  for (i in seq_along(vec)) {
+    if (is.na(vec[i])) {na_count <- na_count + 1}}
+  return(na_count)}
+```
+
+```{r}
+# Let's test the function count_na()
+
+# Create a vector with NAs
+vec <- c(1, NA, 3, NA, 5)
+
+# Call count_na()
+count_na(vec)
+```
