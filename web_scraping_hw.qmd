@@ -1,0 +1,114 @@
+---
+title: "Web Scraping Assignment"
+author: "Jin Sook Song"
+format: html
+editor: visual
+---
+
+# Web Scraping
+
+```{r}
+# Load the necessary packages
+pacman::p_load(rvest, dplyr, tidyverse)
+
+# Install pacman if not already installed
+if (!require("pacman")) install.packages("pacman")
+```
+
+## Problem 1.
+
+### v1. name, email, phone in separate columns
+
+```{r}
+# URL to scrape
+url <- "https://www.american.edu/cas/mathstat/faculty/"
+
+# Read the HTML content of the page
+webpage <- read_html(url)
+
+# Extract all profile sections
+profiles <- webpage %>% html_nodes(".profile-item")
+
+# Extract name (only first line), email, and phone; store as tibble
+faculty_data <- lapply(profiles, function(profile) {
+  # Extract the full name/title/department block
+  name_block <- profile %>% html_node(".profile-name") %>% html_text(trim = TRUE)
+  
+  # Extract only the first line (actual name)
+  name <- strsplit(name_block, "\n")[[1]][1] %>% str_trim()
+  
+  # Extract email and phone
+  email <- profile %>%
+    html_node(".profile-email span[itemprop='email']") %>%
+    html_text(trim = TRUE)
+  
+  phone <- profile %>%
+    html_node(".profile-phone span[itemprop='telephone']") %>%
+    html_text(trim = TRUE)
+
+  # Return tibble row
+  tibble(name = name, email = email, phone = phone)
+}) %>% bind_rows()
+
+faculty_data
+```
+
+```{r}
+# Save the data to a CSV file
+write_csv(faculty_data, "faculty.csv")
+
+# Read the saved CSV file
+faculty_check <- read_csv("faculty.csv")
+
+# Check the data
+print(faculty_check)
+```
+
+### v2. name-email-phone in one column
+
+```{r}
+# URL to scrape
+url <- "https://www.american.edu/cas/mathstat/faculty/"
+
+# Read the HTML content of the page
+webpage <- read_html(url)
+
+# Extract all profile sections
+profiles <- webpage %>% html_nodes(".profile-item")
+
+# Extract and format as a single-column tibble
+faculty_data1 <- lapply(profiles, function(profile) {
+  # Get name (first line only)
+  name_block <- profile %>% html_node(".profile-name") %>% html_text(trim = TRUE)
+  name <- strsplit(name_block, "\n")[[1]][1] %>% str_trim()
+
+  # Get email
+  email <- profile %>%
+    html_node(".profile-email span[itemprop='email']") %>%
+    html_text(trim = TRUE)
+
+  # Get phone
+  phone <- profile %>%
+    html_node(".profile-phone span[itemprop='telephone']") %>%
+    html_text(trim = TRUE)
+
+  # Combine into one string
+  entry <- paste(name, email, phone, sep = " - ")
+
+  # Return a one-column tibble
+  tibble(name_email_phone = entry)
+}) %>% bind_rows()
+
+faculty_data1
+```
+
+```{r}
+# Save the data to a CSV file
+write_csv(faculty_data1, "faculty1.csv")
+
+# Read the saved CSV file
+faculty_check1 <- read_csv("faculty1.csv")
+
+# Check the data
+print(faculty_check1)
+```
